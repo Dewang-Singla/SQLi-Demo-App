@@ -141,7 +141,7 @@ Product images are stored locally in `public/images/products/`. To add your own 
 
 ```
 server.js                      # Express app with all routes
-src/db.js                      # SQLite connection, schema, seed data
+src/db.js                      # MySQL connection, schema, seed data
 scripts/seed.js                # DB initialization script
 views/
   ├── index.ejs                # Home page with featured products
@@ -215,19 +215,3 @@ This application intentionally contains multiple severe security vulnerabilities
 ## 🤝 Contributing
 
 This is an educational project. Feel free to add more attack scenarios or improve the demonstrations!
-
-## Run locally
-
-- Quick start (Windows PowerShell):
-
-```powershell
-cd "path_to_your_project"
-.\start.bat
-```
-
-- Notes:
-   - `start.bat` invokes `start.ps1` (PowerShell wrapper) to perform robust launch steps.
-   - The wrapper detects an existing `node.exe` running `server.js` and reuses it to avoid duplicates, writes `server.pid`, and redirects logs to `server.out.log` / `server.err.log` and merges them into `server.log`.
-   - If your Node installation is not at `D:\NodeJS\node.exe`, edit the `NodeExe` variable at the top of `start.ps1`.
-
-Use the Desktop Start shortcut (if present) for one‑click launches.
