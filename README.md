@@ -222,7 +222,7 @@ This is an educational project. Feel free to add more attack scenarios or improv
 - Quick start (Windows PowerShell):
 
 ```powershell
-cd "C:\Users\Dewang\Downloads\SQLi Demo App"
+cd "path_to_your_project"
 .\start.bat
 ```
 
