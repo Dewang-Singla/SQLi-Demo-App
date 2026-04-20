@@ -1,0 +1,67 @@
+<%- include('partials/header', { title: 'My Orders' }) %>
+
+<h2>📦 My Orders</h2>
+
+<div class="card" style="margin:2rem 0">
+  <h3 style="margin-bottom:1rem">🔍 Order Lookup</h3>
+  <p style="color:#a8c1f5;margin-bottom:1rem">Enter an order ID to view details</p>
+  <form method="post" action="/orders/lookup" class="search-bar">
+    <input type="text" name="order_id" placeholder="Order ID (e.g., 1)" value="<%= order_id %>" required>
+    <button type="submit" class="btn primary">Lookup Order</button>
+  </form>
+</div>
+
+<% if (demo_message) { %>
+  <div class="card" style="margin:1rem 0;padding:1rem;background:#1a2033;color:#cfe3ff">
+    <strong>Demo Notice:</strong>
+    <div style="margin-top:0.5rem"><%= demo_message %></div>
+  </div>
+<% } else if (vulnMode === 'on') { %>
+  <div class="card" style="margin:1rem 0;padding:0.6rem;background:#071224;color:#9fc9ff;font-size:0.95rem">
+    Tip: In Vulnerable mode you can try payloads like <code>0 OR 1=1</code> to demonstrate SQL injection.
+  </div>
+<% } %>
+
+
+<% if (orders && orders.length > 0) { %>
+  <table class="table" style="margin:2rem 0">
+    <thead>
+      <tr>
+        <th>Order ID</th>
+        <th>Customer</th>
+        <th>Total</th>
+        <th>Status</th>
+        <th>Date</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% orders.forEach(order => { %>
+        <tr>
+          <td><strong>#<%= order.id %></strong></td>
+          <td><%= order.username %></td>
+          <td>$<%= Number(order.total).toFixed(2) %></td>
+          <td>
+            <span style="padding:0.3rem 0.7rem;border-radius:6px;font-size:0.85rem;background:<%= order.status === 'completed' ? '#1b4d1b' : '#4d4d1b' %>;color:<%= order.status === 'completed' ? '#88ff88' : '#ffff88' %>">
+              <%= order.status %>
+            </span>
+          </td>
+          <td><%= order.created_at_local %></td>
+          <td><a href="/orders/<%= order.id %>" class="btn btn-sm">View Details</a></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+<% } else if (order_id) { %>
+  <div class="card" style="text-align:center;padding:2rem">
+    <h3>No orders found</h3>
+    <p style="color:#a8c1f5;margin-top:0.5rem">Order #<%= order_id %> does not exist or you don't have permission to view it.</p>
+  </div>
+<% } %>
+
+<div class="hint">
+  <h3>🔒 Order Lookup</h3>
+  <p style="color:#a8c1f5">For privacy and safety, you can only view orders that belong to your account. Enter an order ID to view details where permitted.</p>
+</div>
+
+<%- include('partials/footer') %>

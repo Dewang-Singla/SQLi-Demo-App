@@ -1,0 +1,52 @@
+<%- include('partials/header', { title: 'Products' }) %>
+
+<h2 style="margin-bottom: 1.5rem;">🛍️ Product Catalog</h2>
+
+<form method="get" action="/products" class="search-bar">
+  <input type="text" name="q" value="<%= q %>" placeholder="🔍 Search products..." />
+  <select name="category">
+    <option value="">All Categories</option>
+    <% categories.forEach(cat => { %>
+      <option value="<%= cat.category %>" <%= category === cat.category ? 'selected' : '' %>><%= cat.category %></option>
+    <% }) %>
+  </select>
+  <button type="submit" class="btn primary">Search</button>
+  <% if (q || category) { %>
+    <a href="/products" class="btn secondary">Clear</a>
+  <% } %>
+</form>
+
+<% if (products.length === 0) { %>
+  <div class="card" style="text-align:center;padding:3rem">
+    <h3>No products found</h3>
+    <p style="color:#a8c1f5;margin-top:0.5rem">Try a different search term or category.</p>
+    <a href="/products" class="btn" style="margin-top:1rem">View All Products</a>
+  </div>
+<% } else { %>
+  <div class="product-grid">
+    <% products.forEach(product => { %>
+      <div class="product-card">
+        <img src="<%= getImagePath(product.image_url) %>" alt="<%= product.name %>">
+        <div class="product-card-body">
+          <span class="category"><%= product.category %></span>
+          <h3><%= product.name %></h3>
+          <div class="price">$<%= Number(product.price).toFixed(2) %></div>
+          <div class="stock"><%= product.stock > 0 ? `In stock: ${product.stock}` : 'Out of stock' %></div>
+          <a href="/product/<%= product.id %>" class="btn btn-sm primary" style="width:100%;margin-top:0.5rem;text-align:center">View Details</a>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+<% } %>
+
+<div class="hint">
+  <h3>🎯 SQLi Demo: Product Search</h3>
+  <ul>
+    <li><strong>Vulnerable Mode:</strong> Search query is concatenated: <code>WHERE name LIKE '%<span class="sql-vuln">${userInput}</span>%'</code></li>
+    <li><strong>Try:</strong> Search for <code>%' OR '1'='1</code> to bypass the filter and see all products.</li>
+    <li><strong>Try:</strong> Search for <code>%' UNION SELECT id, name, price, NULL, NULL, NULL FROM products --</code> for UNION attacks.</li>
+    <li><strong>Secure Mode:</strong> Uses parameterized queries that treat user input as data, not SQL code.</li>
+  </ul>
+</div>
+
+<%- include('partials/footer') %>

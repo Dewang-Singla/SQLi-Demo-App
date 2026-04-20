@@ -1,0 +1,44 @@
+<%- include('partials/header', { title: mode === 'edit' ? 'Edit Product' : 'New Product' }) %>
+
+<h2><%= mode === 'edit' ? '✏️ Edit Product' : '➕ New Product' %></h2>
+
+<form method="post" action="<%= mode === 'edit' ? ('/admin/products/' + product.id) : '/admin/products' %>" class="card" style="max-width:720px">
+  <% if (error) { %><div class="error"><%= error %></div><% } %>
+
+  <label>Name
+    <input name="name" value="<%= product ? product.name : '' %>" required />
+  </label>
+
+  <label>Description
+    <textarea name="description" rows="4" required><%= product ? product.description : '' %></textarea>
+  </label>
+
+  <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:1rem">
+    <label>Price
+      <input name="price" type="number" step="0.01" min="0" value="<%= product ? product.price : '' %>" required />
+    </label>
+    <label>Stock
+      <input name="stock" type="number" step="1" min="0" value="<%= product ? product.stock : 0 %>" required />
+    </label>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:1rem">
+    <label>Category
+      <input name="category" value="<%= product ? product.category : '' %>" required />
+    </label>
+    <label>Image Base Name
+      <input name="image_url" value="<%= product ? product.image_url : '' %>" placeholder="e.g., red-t-shirt" />
+      <small style="color:#a8c1f5">No extension needed. App auto-detects .png/.jpg/.jpeg/.webp/.gif</small>
+    </label>
+  </div>
+
+  <div style="display:flex;gap:0.5rem;margin-top:1rem">
+    <button type="submit" class="btn primary"><%= mode === 'edit' ? 'Save Changes' : 'Create Product' %></button>
+    <a href="/admin" class="btn">Cancel</a>
+    <% if (product) { %>
+      <a class="btn" href="/product/<%= product.id %>">View Product</a>
+    <% } %>
+  </div>
+</form>
+
+<%- include('partials/footer') %>

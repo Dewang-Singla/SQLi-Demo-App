@@ -1,0 +1,37 @@
+node_modules/
+npm-debug.log
+.env
+
+# Runtime/log files
+server.pid
+server.out.log
+server.err.log
+server.log
+
+# OS / editor files
+.DS_Store
+.vscode/
+Thumbs.db
+
+
+# Local snapshots and runtime artifacts
+/*.html
+*.cookies.txt
+*_cookies.txt
+headers.txt
+cookies.txt
+
+# Tracking/test files
+tracked.txt
+tracked2.txt
+tracked3.txt
+
+# Docs not needed in repo
+HISTORY_PURGE.md
+IMAGES-NEEDED.txt
+
+# Windows scripts
+*.ps1
+*.bat
+# Runtime data directory (SQLite file removed; MySQL is external)
+data/

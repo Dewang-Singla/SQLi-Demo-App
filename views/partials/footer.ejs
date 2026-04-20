@@ -1,0 +1,34 @@
+</main>
+
+<% if (lastSQL && lastSQL.length > 0) { %>
+<div class="container">
+  <div class="sql-demo <%= vulnMode === 'on' ? '' : 'safe' %>">
+    <h3>Last Executed SQL Query</h3>
+    <% lastSQL.slice(0, 3).forEach(log => { %>
+      <div class="sql-query">
+        <div><strong>Mode:</strong> <%= log.mode === 'on' ? '⚠️ Vulnerable' : '✅ Secure' %></div>
+        <div><strong>SQL:</strong> <code><%= log.sql %></code></div>
+        <% if (log.params && log.params.length > 0) { %>
+          <div><strong>Params:</strong> <code class="sql-param"><%= JSON.stringify(log.params) %></code></div>
+        <% } %>
+        <div style="font-size:0.8rem;color:#888;margin-top:0.3rem">
+          <%= new Date(log.timestamp).toLocaleTimeString('en-IN', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: 'Asia/Kolkata' }) %>
+        </div>
+      </div>
+    <% }) %>
+    <% if (vulnMode === 'on') { %>
+      <p style="color:#ff8888;margin-top:0.75rem">⚠️ <strong>Warning:</strong> User input is directly concatenated into SQL queries, allowing SQL injection attacks!</p>
+    <% } else { %>
+      <p style="color:#88ff88;margin-top:0.75rem">✅ <strong>Safe:</strong> Parameterized queries prevent SQL injection by separating SQL logic from user data.</p>
+    <% } %>
+  </div>
+</div>
+<% } %>
+
+<footer class="footer">
+  <p><strong>⚠️ For Educational Purposes Only</strong> — Do not deploy to production!</p>
+  <p>Current Mode: <span class="mode-badge <%= vulnMode %>"><%= vulnMode === 'on' ? 'Vulnerable' : 'Secure' %></span></p>
+  <p><a href="https://owasp.org/www-community/attacks/SQL_Injection" target="_blank" rel="noreferrer">Learn about SQL Injection (OWASP) →</a></p>
+</footer>
+</body>
+</html>

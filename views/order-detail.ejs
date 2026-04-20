@@ -1,0 +1,56 @@
+<%- include('partials/header', { title: 'Order Details' }) %>
+
+<h2>📦 Order #<%= order.id %></h2>
+
+<div style="display:grid;grid-template-columns:2fr 1fr;gap:2rem;margin:2rem 0">
+  <div>
+    <div class="card">
+      <h3 style="margin-bottom:1rem">Order Items</h3>
+      <% items.forEach(item => { %>
+        <div style="display:flex;align-items:center;gap:1rem;padding:1rem 0;border-bottom:1px solid #1b2a4d">
+          <img src="<%= getImagePath(item.image_url) %>" alt="<%= item.name %>" style="width:60px;height:60px;object-fit:cover;border-radius:8px">
+          <div style="flex:1">
+            <div style="font-weight:600;margin-bottom:0.3rem"><%= item.name %></div>
+            <div style="color:#a8c1f5;font-size:0.9rem">Quantity: <%= item.quantity %> × $<%= Number(item.price).toFixed(2) %></div>
+          <div>
+          <div style="font-weight:700;color:#5b9aff;font-size:1.1rem">$<%= (item.quantity * Number(item.price)).toFixed(2) %></div>
+        </div>
+      <% }) %>
+      
+      <div style="display:flex;justify-content:space-between;margin-top:1.5rem;padding-top:1rem;border-top:2px solid #3a4a80;font-size:1.3rem;font-weight:700">
+        <div>Total:</div>
+        <div style="color:#5b9aff">$<%= Number(order.total).toFixed(2) %></div>
+      </div>
+    </div>
+  </div>
+  
+  <div>
+    <div class="card">
+      <h3 style="margin-bottom:1rem">Order Information</h3>
+      <div style="margin:0.75rem 0">
+        <div style="color:#a8c1f5;font-size:0.85rem">Order ID</div>
+        <div style="font-weight:600">#<%= order.id %></div>
+      </div>
+      <div style="margin:0.75rem 0">
+        <div style="color:#a8c1f5;font-size:0.85rem">Status</div>
+        <div>
+          <span style="padding:0.3rem 0.7rem;border-radius:6px;font-size:0.85rem;background:<%= order.status === 'completed' ? '#1b4d1b' : '#4d4d1b' %>;color:<%= order.status === 'completed' ? '#88ff88' : '#ffff88' %>">
+            <%= order.status %>
+          </span>
+        </div>
+      </div>
+      <div style="margin:0.75rem 0">
+        <div style="color:#a8c1f5;font-size:0.85rem">Order Date</div>
+        <div style="font-weight:600"><%= order.created_at_local %></div>
+      </div>
+      <div style="margin:0.75rem 0">
+        <div style="color:#a8c1f5;font-size:0.85rem">Total</div>
+        <div style="font-weight:700;color:#5b9aff;font-size:1.2rem">$<%= Number(order.total).toFixed(2) %></div>
+      </div>
+    </div>
+    
+    <a href="/orders" class="btn secondary" style="width:100%;margin-top:1rem;text-align:center">← Back to Orders</a>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

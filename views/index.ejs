@@ -1,0 +1,66 @@
+<%- include('partials/header', { title: title }) %>
+
+<div class="hero">
+  <h1>🛡️ SQLi Demo Store</h1>
+  <p>An intentionally vulnerable e-commerce application for demonstrating SQL Injection attacks.</p>
+  <p style="margin-top:1rem">🎯 <strong>Educational Purpose:</strong> Learn how SQL injection works and how to prevent it.</p>
+  <div class="actions">
+    <a class="btn primary" href="/products">🛍️ Browse Products</a>
+    <% if (!user) { %>
+      <a class="btn" href="/login">🔐 Login</a>
+    <% } else { %>
+      <a class="btn" href="/cart">🛒 View Cart (<%= cart.length %>)</a>
+      <a class="btn" href="/orders">📦 My Orders</a>
+    <% } %>
+  </div>
+</div>
+
+<h2 style="margin: 2rem 0 1rem; text-align: center; color: #80b3ff;">Featured Products</h2>
+<div class="product-grid">
+  <% featuredProducts.forEach(product => { %>
+    <div class="product-card">
+      <img src="<%= getImagePath(product.image_url) %>" alt="<%= product.name %>">
+      <div class="product-card-body">
+        <span class="category"><%= product.category %></span>
+        <h3><%= product.name %></h3>
+        <div class="price">$<%= Number(product.price).toFixed(2) %></div>
+        <div class="stock">In stock: <%= product.stock %></div>
+        <a href="/product/<%= product.id %>" class="btn btn-sm primary" style="width:100%;margin-top:0.5rem;text-align:center">View Details</a>
+      </div>
+    </div>
+  <% }) %>
+</div>
+
+<div class="hint">
+  <h3>🎓 How to Use This Demo</h3>
+  <ul>
+    <li><strong>Toggle Mode:</strong> Use the toggle in the header to switch between <strong>Vulnerable</strong> and <strong>Secure</strong> modes.</li>
+    <li><strong>Try SQL Injection:</strong> In vulnerable mode, test SQLi attacks on login, search, and order lookup.</li>
+    <li><strong>View SQL Queries:</strong> Check the bottom of each page to see the actual SQL being executed.</li>
+    <li><strong>Compare Approaches:</strong> See how parameterized queries in secure mode prevent attacks.</li>
+  </ul>
+</div>
+
+<div class="card" style="max-width:600px;margin:2rem auto">
+  <h3 style="margin-bottom:1rem">⚙️ Advanced Options</h3>
+  <% if (user && user.role === 'admin') { %>
+    <details>
+      <summary style="cursor:pointer;padding:0.5rem;background:#1a2440;border-radius:6px;margin-bottom:0.5rem">🔄 Reset Database</summary>
+      <form method="post" action="/reset-db" style="margin-top:1rem">
+        <p style="color:#ff8888;margin-bottom:1rem">⚠️ This will drop all tables and re-seed the database.</p>
+        <input type="hidden" name="reset_token" value="<%= resetToken %>" />
+        <p style="margin-bottom:0.5rem">Type '<strong><%= (typeof resetConfirmPhrase !== 'undefined' ? resetConfirmPhrase : 'RESET DEMO') %></strong>' to confirm.</p>
+        <input type="text" name="confirm_phrase" placeholder="Type confirmation phrase" style="width:100%;padding:0.5rem;margin-bottom:0.5rem" />
+        <span id="reset-confirm" data-phrase="<%= (typeof resetConfirmPhrase !== 'undefined' ? resetConfirmPhrase : 'RESET DEMO') %>" style="display:none"></span>
+        <% if (typeof resetInProgress !== 'undefined' && resetInProgress) { %>
+          <p style="color:#ffaa00;margin-bottom:1rem">🔁 A database reset is currently in progress. Please wait for it to complete.</p>
+          <button class="btn warn" type="button" disabled>Reset in progress...</button>
+        <% } else { %>
+          <button class="btn warn" type="submit">Drop & Re-seed Database</button>
+        <% } %>
+      </form>
+    </details>
+  <% } %>
+</div>
+
+<%- include('partials/footer') %>

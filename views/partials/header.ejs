@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title><%= typeof title !== 'undefined' ? title : 'SQLi Demo Store' %></title>
+  <link rel="stylesheet" href="/public/styles.css" />
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="/">SQLi Demo Store</a>
+  <nav>
+    <a href="/products">Products</a>
+    <% if (user) { %>
+      <a href="/cart">🛒 Cart (<%= cart.length %>)</a>
+      <a href="/orders">My Orders</a>
+      <% if (user.role === 'admin') { %>
+        <a href="/admin">Admin</a>
+      <% } %>
+      <form method="post" action="/logout" style="display:inline-block"><button type="submit" class="linklike">Logout (<%= user.username %>)</button></form>
+    <% } else { %>
+      <a href="/login">Login</a>
+      <a href="/signup">Sign Up</a>
+    <% } %>
+    <div class="mode-toggle">
+      <span class="mode-badge <%= vulnMode %>"><%= vulnMode === 'on' ? '⚠️ Vulnerable' : '✅ Secure' %></span>
+      <form method="post" action="/toggle-mode" style="display:inline">
+        <button type="submit" class="toggle-btn">Toggle Mode</button>
+      </form>
+    </div>
+  </nav>
+</header>
+<main class="container">
+  <% if (typeof msg !== 'undefined' && msg) { %>
+    <div class="flash"><%= msg %></div>
+  <% } %>

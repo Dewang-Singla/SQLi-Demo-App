@@ -1,0 +1,164 @@
+<%- include('partials/header', { title: 'Admin Dashboard' }) %>
+
+<h2>🎛️ Admin Dashboard</h2>
+
+<div class="card" style="margin:2rem 0;background:linear-gradient(135deg, rgba(37,99,235,0.1) 0%, rgba(29,78,216,0.1) 100%)">
+  <h3 style="margin-bottom:1rem">👋 Welcome, <%= user.username %>!</h3>
+  <p style="color:#a8c1f5">Role: <span style="padding:0.3rem 0.7rem;background:#1a2440;border-radius:6px;font-weight:600"><%= user.role %></span></p>
+  <p style="color:#a8c1f5;margin-top:0.5rem">Email: <%= user.email %></p>
+</div>
+
+<h3 style="margin:2rem 0 1rem">📊 Statistics</h3>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.5rem;margin:1rem 0">
+  <div class="card" style="text-align:center">
+    <div style="font-size:2.5rem;font-weight:700;color:#5b9aff"><%= stats.users %></div>
+    <div style="color:#a8c1f5;margin-top:0.5rem">Total Users</div>
+  </div>
+  <div class="card" style="text-align:center">
+    <div style="font-size:2.5rem;font-weight:700;color:#88ff88"><%= stats.products %></div>
+    <div style="color:#a8c1f5;margin-top:0.5rem">Total Products</div>
+  </div>
+  <div class="card" style="text-align:center">
+    <div style="font-size:2.5rem;font-weight:700;color:#ffaa88"><%= stats.orders %></div>
+    <div style="color:#a8c1f5;margin-top:0.5rem">Total Orders</div>
+  </div>
+</div>
+
+<div style="display:flex;justify-content:space-between;align-items:center;margin-top:2rem">
+  <h3>📦 Recent Orders</h3>
+  <a href="/admin/products/new" class="btn primary">➕ New Product</a>
+  </div>
+<% if (recentOrders && recentOrders.length > 0) { %>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Order ID</th>
+        <th>Customer</th>
+        <th>Total</th>
+        <th>Status</th>
+        <th>Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% recentOrders.forEach(order => { %>
+        <tr>
+          <td><strong>#<%= order.id %></strong></td>
+          <td><%= order.username %></td>
+          <td>$<%= Number(order.total).toFixed(2) %></td>
+          <td>
+            <% if (order.status === 'completed') { %>
+              <span style="color:#88ff88">✓ <%= order.status %></span>
+            <% } else { %>
+              <span style="color:#ffff88">⏳ <%= order.status %></span>
+            <% } %>
+          </td>
+          <td><%= new Date(order.created_at).toLocaleDateString() %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+<% } else { %>
+  <div class="card" style="text-align:center;padding:2rem">
+    <p style="color:#a8c1f5">No orders yet.</p>
+  </div>
+<% } %>
+
+<div class="hint">
+  <h3>🎯 About This Page</h3>
+  <p>This admin dashboard is only accessible after authentication. In vulnerable mode, SQL injection can bypass login to access this page without valid credentials.</p>
+</div>
+
+<h3 style="margin:2rem 0 1rem">🛠️ Manage Product Stock</h3>
+<% if (msg) { %>
+  <div class="success" style="margin-bottom:1rem"><%= msg %></div>
+<% } %>
+<table class="table">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Category</th>
+      <th>Stock</th>
+      <th style="min-width:300px">Modify</th>
+      <th>Mode</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% (products || []).forEach(p => { %>
+      <tr>
+        <td>#<%= p.id %></td>
+        <td><%= p.name %></td>
+        <td><%= p.category %></td>
+        <td style="font-weight:600;color:#5b9aff"><%= p.stock %></td>
+        <td>
+          <div style="display:flex;flex-direction:column;gap:0.4rem">
+            <form method="post" action="/admin/stock" style="display:flex;gap:0.4rem;align-items:center">
+              <input type="hidden" name="product_id" value="<%= p.id %>" />
+              <input type="hidden" name="action" value="add" />
+              <input name="amount" type="number" min="1" placeholder="+" style="width:70px" required />
+              <button type="submit" class="btn btn-sm primary">Add</button>
+            </form>
+            <form method="post" action="/admin/stock" style="display:flex;gap:0.4rem;align-items:center">
+              <input type="hidden" name="product_id" value="<%= p.id %>" />
+              <input type="hidden" name="action" value="remove" />
+              <input name="amount" type="number" min="1" placeholder="-" style="width:70px" required />
+              <button type="submit" class="btn btn-sm" style="background:#ff7b5b">Remove</button>
+            </form>
+            <form method="post" action="/admin/stock" style="display:flex;gap:0.4rem;align-items:center">
+              <input type="hidden" name="product_id" value="<%= p.id %>" />
+              <input type="hidden" name="action" value="set" />
+              <input name="amount" type="number" min="0" placeholder="Set" style="width:70px" required />
+              <button type="submit" class="btn btn-sm" style="background:#5b9aff">Set</button>
+            </form>
+          </div>
+        </td>
+        <td>
+          <% if (vulnMode === 'on') { %>
+            <span style="color:#ffaa88;font-size:0.7rem;display:block;max-width:140px">Try tampering product_id (e.g. <code><%= p.id %> OR 1=1</code>)</span>
+          <% } else { %>
+            <span style="color:#88ff88;font-size:0.75rem">Secure</span>
+          <% } %>
+        </td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>
+
+<div class="hint" style="margin-top:2rem">
+  <h3>⚠️ Stock Update Demo</h3>
+  <p>In vulnerable mode, all three stock operations (add/remove/set) concatenate unsanitized input directly into SQL.</p>
+  <ul>
+    <li><strong>Try (Vulnerable Mode):</strong> Change a hidden <code>product_id</code> field to <code>1 OR 1=1</code> to affect all rows.</li>
+    <li><strong>Try:</strong> For a SET action, attempt <code>0; UPDATE users SET role='admin' WHERE id=1 --</code> (will show how multiple statements are blocked by SQLite driver, but conceptually dangerous in some stacks).</li>
+    <li><strong>Secure Mode:</strong> Parameterized query prevents altering unrelated products.</li>
+  </ul>
+</div>
+
+<h3 style="margin:2.5rem 0 1rem">🧾 Recent Audit Log</h3>
+<table class="table">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Time</th>
+      <th>User</th>
+      <th>Action</th>
+      <th>Entity</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% (audits || []).forEach(a => { %>
+      <tr>
+        <td><%= a.id %></td>
+        <td><%= new Date(a.created_at).toLocaleTimeString() %></td>
+        <td><%= a.username || 'anonymous' %></td>
+        <td><%= a.action %></td>
+        <td><%= a.entity_type %> <%= a.entity_id ? '#' + a.entity_id : '' %></td>
+      </tr>
+    <% }) %>
+    <% if (!audits || audits.length === 0) { %>
+      <tr><td colspan="5" style="text-align:center;color:#a8c1f5">No audit entries yet.</td></tr>
+    <% } %>
+  </tbody>
+</table>
+
+<%- include('partials/footer') %>

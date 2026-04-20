@@ -1,0 +1,75 @@
+<%- include('partials/header', { title: 'Login' }) %>
+
+<div style="max-width:500px;margin:3rem auto">
+  <h2 style="text-align:center;margin-bottom:2rem">🔐 Login</h2>
+  
+  <form method="post" action="<%= otpRequired ? '/login/verify-otp' : '/login' %>" class="card">
+    <% if (error) { %><div class="error"><%= error %></div><% } %>
+    <% if (success) { %><div class="success"><%= success %></div><% } %>
+    
+    <% if (otpRequired) { %>
+      <div style="background:#1a2440;padding:1rem;border-radius:8px;margin-bottom:1rem;border:2px solid #5b9aff;color:#a8c1f5">
+        Enter the 6-digit OTP sent to your email for <strong style="color:#5b9aff"><%= pendingUsername %></strong>.
+      </div>
+
+      <% if (otpDebugCode) { %>
+        <div style="background:#1a2440;padding:1rem;border-radius:8px;margin-bottom:1rem;border:2px solid #ff9d5b">
+          <div style="text-align:center">
+            <div style="color:#a8c1f5;margin-bottom:0.5rem">⚠️ Email Not Configured - Your OTP:</div>
+            <div style="font-size:2rem;font-weight:700;color:#ff9d5b;letter-spacing:0.5rem;font-family:monospace"><%= otpDebugCode %></div>
+          </div>
+        </div>
+      <% } %>
+
+      <label>One-Time Password
+        <input
+          name="otpCode"
+          placeholder="Enter 6-digit OTP"
+          required
+          autofocus
+          maxlength="6"
+          pattern="\d{6}"
+          style="font-size:1.3rem;letter-spacing:0.3rem;text-align:center;font-family:monospace"
+        />
+      </label>
+    <% } else { %>
+      <label>Username
+        <input name="username" placeholder="Enter your username" required autofocus />
+      </label>
+      
+      <label>Password
+        <input name="password" type="password" placeholder="Enter your password" required />
+      </label>
+    <% } %>
+    
+    <button type="submit" class="btn primary" style="width:100%"><%= otpRequired ? 'Verify OTP' : 'Login' %></button>
+
+    <% if (otpRequired) { %>
+      <button type="submit" formaction="/login/resend-otp" formmethod="post" class="btn" style="width:100%;margin-top:0.7rem">Resend OTP</button>
+    <% } %>
+    
+      <p style="text-align:center;margin-top:1rem;color:#a8c1f5">
+        <% if (otpRequired) { %>
+          Need to restart? <a href="/login">Back to login</a>
+        <% } else { %>
+          Don't have an account? <a href="/signup">Sign up here</a>
+        <% } %>
+      </p>
+  </form>
+  
+  <!-- Test accounts hidden per configuration: use your own test accounts or signup -->
+</div>
+
+<div class="hint" style="max-width:700px;margin:2rem auto">
+  <h3>🎯 SQLi Demo: Authentication Bypass</h3>
+  <ul>
+    <li><strong>Vulnerable Mode:</strong> Login query is: <code>WHERE username = '<span class="sql-vuln">${username}</span>' AND password = '<span class="sql-vuln">${password}</span>'</code> (both fields vulnerable)</li>
+    <li><strong>Try:</strong> Username: <code>' OR '1'='1</code>, Password: anything (bypass both fields)</li>
+    <li><strong>Try:</strong> Username: <code>admin' --</code>, Password: anything (comment-based bypass)</li>
+    <li><strong>Try:</strong> Username: <code>alice' --</code>, Password: anything (SQLi works on any user)</li>
+    <li><strong>Try:</strong> Username: <code>admin</code>, Password: <code>' OR '1'='1</code> (exploit password field)</li>
+    <li><strong>Secure Mode:</strong> Uses parameterized queries with bcrypt verification.</li>
+  </ul>
+</div>
+
+<%- include('partials/footer') %>

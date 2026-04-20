@@ -1,0 +1,43 @@
+<%- include('partials/header', { title: product.name }) %>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin:2rem 0">
+  <div>
+    <img src="<%= getImagePath(product.image_url) %>" alt="<%= product.name %>" style="width:100%;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.3)">
+  </div>
+  <div>
+    <span class="category" style="font-size:0.9rem"><%= product.category %></span>
+    <h1 style="margin:0.5rem 0 1rem;font-size:2rem"><%= product.name %></h1>
+    <div class="price" style="font-size:2.5rem;color:#5b9aff;margin:1rem 0">$<%= Number(product.price).toFixed(2) %></div>
+    <p style="color:#a8c1f5;line-height:1.7;margin:1.5rem 0"><%= product.description %></p>
+    <div style="color:#88ff88;margin:1rem 0;font-weight:600">
+      <%= product.stock > 0 ? `✓ In Stock: ${product.stock} available` : '✗ Out of Stock' %>
+    </div>
+    
+    <% if (product.stock > 0) { %>
+      <form method="post" action="/cart/add" class="card" style="max-width:400px;margin-top:2rem">
+        <input type="hidden" name="product_id" value="<%= product.id %>">
+        <label>
+          Quantity
+          <input type="number" name="quantity" value="1" min="1" max="<%= product.stock %>" required>
+        </label>
+        <button type="submit" class="btn primary" style="width:100%">🛒 Add to Cart</button>
+      </form>
+    <% } else { %>
+      <button class="btn" disabled style="width:100%;max-width:400px;margin-top:2rem;opacity:0.5">Out of Stock</button>
+    <% } %>
+    
+    <a href="/products" class="btn secondary" style="margin-top:1rem;display:inline-block">← Back to Products</a>
+  </div>
+</div>
+
+<div class="hint">
+  <h3>🎯 SQLi Demo: Product Detail</h3>
+  <ul>
+    <li><strong>Vulnerable Mode:</strong> Product ID is concatenated: <code>WHERE id = <span class="sql-vuln">${id}</span></code></li>
+    <li><strong>Try:</strong> Visit <code>/product/1 OR 1=1</code> to potentially expose unintended data.</li>
+    <li><strong>Try:</strong> Visit <code>/product/1 UNION SELECT id,username,password,email,NULL,NULL,NULL FROM users LIMIT 1 --</code> to extract user data.</li>
+    <li><strong>Secure Mode:</strong> ID is validated and parameterized, preventing injection.</li>
+  </ul>
+</div>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,96 @@
+<%- include('partials/header', { title: 'Sign Up' }) %>
+
+<div style="max-width:500px;margin:3rem auto">
+  <h2 style="text-align:center;margin-bottom:2rem">
+    <% if (pendingVerification) { %>
+      ✉️ Verify Your Email
+    <% } else { %>
+      📝 Create Account
+    <% } %>
+  </h2>
+  
+  <form method="post" action="/signup" class="card">
+    <% if (error) { %><div class="error"><%= error %></div><% } %>
+    <% if (success && !pendingVerification) { %>
+      <div class="success"><%= success %></div>
+      <a href="/login" class="btn primary" style="width:100%;text-align:center;display:block;margin-top:1rem">Go to Login →</a>
+    <% } %>
+    
+    <% if (pendingVerification) { %>
+      <!-- Verification Step -->
+      <% if (success) { %>
+        <div class="success" style="margin-bottom:1rem"><%= success %></div>
+      <% } %>
+      
+      <% if (verificationCode) { %>
+        <div style="background:#1a2440;padding:1rem;border-radius:8px;margin-bottom:1rem;border:2px solid #ff9d5b">
+          <div style="text-align:center">
+            <div style="color:#a8c1f5;margin-bottom:0.5rem">⚠️ Email Not Configured - Your Code:</div>
+            <div style="font-size:2rem;font-weight:700;color:#ff9d5b;letter-spacing:0.5rem;font-family:monospace"><%= verificationCode %></div>
+            <div style="color:#a8c1f5;margin-top:0.5rem;font-size:0.85rem">Configure SMTP in .env to send real emails</div>
+          </div>
+        </div>
+      <% } else { %>
+        <div style="background:#1a2440;padding:1rem;border-radius:8px;margin-bottom:1rem;border:2px solid #5b9aff">
+          <div style="text-align:center">
+            <div style="font-size:3rem;margin-bottom:0.5rem">✉️</div>
+            <div style="color:#5b9aff;font-size:1.1rem;font-weight:600;margin-bottom:0.3rem">Check Your Inbox</div>
+            <div style="color:#a8c1f5;font-size:0.9rem">Enter the 6-digit code we sent to <strong style="color:#5b9aff"><%= userEmail %></strong></div>
+          </div>
+        </div>
+      <% } %>
+      
+      <input type="hidden" name="username" value="<%= username %>" />
+      <input type="hidden" name="email" value="<%= userEmail %>" />
+      
+      <label>Verification Code
+        <input 
+          name="verificationCode" 
+          placeholder="Enter 6-digit code" 
+          required 
+          autofocus 
+          maxlength="6"
+          pattern="\d{6}"
+          style="font-size:1.5rem;letter-spacing:0.3rem;text-align:center;font-family:monospace"
+        />
+      </label>
+      
+      <button type="submit" class="btn primary" style="width:100%">Verify Email</button>
+      
+      <p style="text-align:center;margin-top:1rem;color:#a8c1f5;font-size:0.9rem">
+        Didn't receive the code? Check your spam folder or <a href="/signup">sign up again</a>
+      </p>
+      
+    <% } else if (!success) { %>
+      <!-- Signup Step -->
+      <label>Username
+        <input name="username" placeholder="Choose a username" required autofocus minlength="3" />
+      </label>
+      
+      <label>Email
+        <input name="email" type="email" placeholder="your@email.com" required />
+      </label>
+      
+      <label>Password
+        <div style="border-radius:6px;padding:8px 12px;font-size:13px;margin-bottom:6px;<% if (vulnerableMode) { %>background:#FFF3CD;color:#856404<% } else { %>background:#D4EDDA;color:#155724<% } %>">
+          <% if (vulnerableMode) { %>
+            ⚠️ Passwords are stored in plaintext for SQLi demo.
+          <% } else { %>
+            ✅ Secure mode: Passwords are hashed with bcrypt (never stored in plaintext).
+          <% } %>
+        </div>
+        <input name="password" type="password" placeholder="Choose a password" required minlength="6" />
+      </label>
+      
+      <button type="submit" class="btn primary" style="width:100%">Create Account</button>
+      
+      <p style="text-align:center;margin-top:1rem;color:#a8c1f5">
+        Already have an account? <a href="/login">Login here</a>
+      </p>
+    <% } %>
+  </form>
+  
+
+</div>
+
+<%- include('partials/footer') %>
