@@ -22,7 +22,7 @@ A fully-featured e-commerce application built to demonstrate **SQL Injection (SQ
 ## Stack
 
 - Node.js + Express
-- SQLite (file DB)
+- MySQL (database)
 - EJS templates
 
 ## Quick start (Windows PowerShell)
@@ -157,11 +157,10 @@ views/
       ├── header.ejs           # Header with mode toggle
       └── footer.ejs           # Footer with SQL demo panel
 public/styles.css              # Modern styling with gradients
-.env                           # Config (VULN_MODE, PORT, etc.)
-data/app.db                    # SQLite database (auto-created)
+.env                           # Config (VULN_MODE, PORT, MYSQL_*, etc.)
 ```
 
-## 🗃️ Database Schema
+## 🗃️ Database Schema (MySQL)
 
 - **users:** id, username, password (plaintext), password_bcrypt (bcrypt hashed), role, email, is_verified
 - **products:** id, name, description, price, image_url, category, stock
